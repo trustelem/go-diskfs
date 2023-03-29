@@ -11,6 +11,7 @@ import (
 
 	diskfs "github.com/diskfs/go-diskfs"
 	"github.com/diskfs/go-diskfs/disk"
+	"github.com/diskfs/go-diskfs/disk/formats"
 )
 
 const oneMB = 10 * 1024 * 1024
@@ -101,18 +102,18 @@ func TestCreate(t *testing.T) {
 		name       string
 		path       string
 		size       int64
-		format     diskfs.Format
+		format     formats.Format
 		sectorSize diskfs.SectorSize
 		disk       *disk.Disk
 		err        error
 	}{
-		{"no file", "", 10 * oneMB, diskfs.Raw, diskfs.SectorSizeDefault, nil, fmt.Errorf("must pass device name")},
-		{"zero size", "disk", 0, diskfs.Raw, diskfs.SectorSizeDefault, nil, fmt.Errorf("must pass valid device size to create")},
-		{"negative size", "disk", -1, diskfs.Raw, diskfs.SectorSizeDefault, nil, fmt.Errorf("must pass valid device size to create")},
-		{"directory does not exist", "foo/bar/232323/23/2322/disk", 10 * oneMB, diskfs.Raw, diskfs.SectorSizeDefault, nil, fmt.Errorf("could not create device")},
-		{"10MB with default sector size", "disk", 10 * oneMB, diskfs.Raw, diskfs.SectorSizeDefault, &disk.Disk{LogicalBlocksize: 512, PhysicalBlocksize: 512, Size: 10 * oneMB, Type: disk.File}, nil},
-		{"10MB with 512 sector size", "disk", 10 * oneMB, diskfs.Raw, diskfs.SectorSize512, &disk.Disk{LogicalBlocksize: 512, PhysicalBlocksize: 512, Size: 10 * oneMB, Type: disk.File}, nil},
-		{"10MB with 2048 sector size", "disk", 10 * oneMB, diskfs.Raw, diskfs.SectorSize4k, &disk.Disk{LogicalBlocksize: 4096, PhysicalBlocksize: 4096, Size: 10 * oneMB, Type: disk.File}, nil},
+		{"no file", "", 10 * oneMB, formats.Raw, diskfs.SectorSizeDefault, nil, fmt.Errorf("must pass device name")},
+		{"zero size", "disk", 0, formats.Raw, diskfs.SectorSizeDefault, nil, fmt.Errorf("must pass valid device size to create")},
+		{"negative size", "disk", -1, formats.Raw, diskfs.SectorSizeDefault, nil, fmt.Errorf("must pass valid device size to create")},
+		{"directory does not exist", "foo/bar/232323/23/2322/disk", 10 * oneMB, formats.Raw, diskfs.SectorSizeDefault, nil, fmt.Errorf("could not create device")},
+		{"10MB with default sector size", "disk", 10 * oneMB, formats.Raw, diskfs.SectorSizeDefault, &disk.Disk{LogicalBlocksize: 512, PhysicalBlocksize: 512, Size: 10 * oneMB, Type: disk.File}, nil},
+		{"10MB with 512 sector size", "disk", 10 * oneMB, formats.Raw, diskfs.SectorSize512, &disk.Disk{LogicalBlocksize: 512, PhysicalBlocksize: 512, Size: 10 * oneMB, Type: disk.File}, nil},
+		{"10MB with 2048 sector size", "disk", 10 * oneMB, formats.Raw, diskfs.SectorSize4k, &disk.Disk{LogicalBlocksize: 4096, PhysicalBlocksize: 4096, Size: 10 * oneMB, Type: disk.File}, nil},
 	}
 
 	for i, tt := range tests {

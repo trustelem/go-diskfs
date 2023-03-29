@@ -14,6 +14,7 @@ import (
 	"testing"
 
 	"github.com/diskfs/go-diskfs/disk"
+	"github.com/diskfs/go-diskfs/disk/formats/raw"
 	"github.com/diskfs/go-diskfs/filesystem"
 	"github.com/diskfs/go-diskfs/partition"
 	"github.com/diskfs/go-diskfs/partition/gpt"
@@ -67,8 +68,9 @@ func TestGetPartitionTable(t *testing.T) {
 	// be sure to close the file
 	defer f.Close()
 
+	driver, _ := raw.NewRaw(f, false, 0)
 	d := &disk.Disk{
-		File:              f,
+		Driver:            driver,
 		LogicalBlocksize:  512,
 		PhysicalBlocksize: 512,
 		Writable:          false,
@@ -106,8 +108,9 @@ func TestPartition(t *testing.T) {
 			t.Fatalf("error reading info on temporary disk: %v", err)
 		}
 
+		driver, _ := raw.NewRaw(f, false, 0)
 		d := &disk.Disk{
-			File:              f,
+			Driver:            driver,
 			LogicalBlocksize:  512,
 			PhysicalBlocksize: 512,
 			Info:              fileInfo,
@@ -149,8 +152,9 @@ func TestPartition(t *testing.T) {
 			t.Fatalf("error reading info on temporary disk: %v", err)
 		}
 
+		driver, _ := raw.NewRaw(f, false, 0)
 		d := &disk.Disk{
-			File:              f,
+			Driver:            driver,
 			LogicalBlocksize:  512,
 			PhysicalBlocksize: 512,
 			Info:              fileInfo,
@@ -229,8 +233,9 @@ func TestWritePartitionContents(t *testing.T) {
 					t.Fatalf("error reading info on temporary disk: %v", err)
 				}
 
+				driver, _ := raw.NewRaw(f, false, 0)
 				d := &disk.Disk{
-					File:              f,
+					Driver:            driver,
 					LogicalBlocksize:  512,
 					PhysicalBlocksize: 512,
 					Info:              fileInfo,
@@ -315,8 +320,9 @@ func TestReadPartitionContents(t *testing.T) {
 				b2 := make([]byte, partitionSize*512)
 				_, _ = f.ReadAt(b2, int64(partitionStart*512))
 
+				driver, _ := raw.NewRaw(f, false, 0)
 				d := &disk.Disk{
-					File:              f,
+					Driver:            driver,
 					LogicalBlocksize:  512,
 					PhysicalBlocksize: 512,
 					Info:              fileInfo,
@@ -388,8 +394,9 @@ func TestReadPartitionContents(t *testing.T) {
 				b2 := make([]byte, partitionSize*512)
 				_, _ = f.ReadAt(b2, int64(partitionStart*512))
 
+				driver, _ := raw.NewRaw(f, false, 0)
 				d := &disk.Disk{
-					File:              f,
+					Driver:            driver,
 					LogicalBlocksize:  512,
 					PhysicalBlocksize: 512,
 					Info:              fileInfo,
@@ -436,8 +443,9 @@ func TestCreateFilesystem(t *testing.T) {
 			t.Fatalf("error reading info on temporary disk: %v", err)
 		}
 
+		driver, _ := raw.NewRaw(f, false, 0)
 		d := &disk.Disk{
-			File:              f,
+			Driver:            driver,
 			LogicalBlocksize:  512,
 			PhysicalBlocksize: 512,
 			Info:              fileInfo,
@@ -470,8 +478,9 @@ func TestCreateFilesystem(t *testing.T) {
 			t.Fatalf("error reading info on temporary disk: %v", err)
 		}
 
+		driver, _ := raw.NewRaw(f, false, 0)
 		d := &disk.Disk{
-			File:              f,
+			Driver:            driver,
 			LogicalBlocksize:  512,
 			PhysicalBlocksize: 512,
 			Info:              fileInfo,
@@ -512,8 +521,9 @@ func TestCreateFilesystem(t *testing.T) {
 			},
 			LogicalSectorSize: 512,
 		}
+		driver, _ := raw.NewRaw(f, false, 0)
 		d := &disk.Disk{
-			File:              f,
+			Driver:            driver,
 			LogicalBlocksize:  512,
 			PhysicalBlocksize: 512,
 			Info:              fileInfo,
@@ -560,8 +570,9 @@ func TestGetFilesystem(t *testing.T) {
 			t.Fatalf("error reading info on temporary disk: %v", err)
 		}
 
+		driver, _ := raw.NewRaw(f, false, 0)
 		d := &disk.Disk{
-			File:              f,
+			Driver:            driver,
 			LogicalBlocksize:  512,
 			PhysicalBlocksize: 512,
 			Info:              fileInfo,
@@ -594,8 +605,9 @@ func TestGetFilesystem(t *testing.T) {
 			t.Fatalf("error reading info on temporary disk: %v", err)
 		}
 
+		driver, _ := raw.NewRaw(f, false, 0)
 		d := &disk.Disk{
-			File:              f,
+			Driver:            driver,
 			LogicalBlocksize:  512,
 			PhysicalBlocksize: 512,
 			Info:              fileInfo,
@@ -636,8 +648,9 @@ func TestGetFilesystem(t *testing.T) {
 			},
 			LogicalSectorSize: 512,
 		}
+		driver, _ := raw.NewRaw(f, false, 0)
 		d := &disk.Disk{
-			File:              f,
+			Driver:            driver,
 			LogicalBlocksize:  512,
 			PhysicalBlocksize: 512,
 			Info:              fileInfo,
