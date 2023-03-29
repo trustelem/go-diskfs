@@ -110,6 +110,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/diskfs/go-diskfs/disk"
+	"github.com/diskfs/go-diskfs/disk/formats"
 )
 
 // when we use a disk image with a GPT, we cannot get the logical sector size from the disk via the kernel
@@ -120,14 +121,6 @@ const (
 	// firstblock                       = 2048
 	// blksszGet                        = 0x1268
 	// blkpbszGet                       = 0x127b
-)
-
-// Format represents the format of the disk
-type Format int
-
-const (
-	// Raw disk format for basic raw disk
-	Raw Format = iota
 )
 
 // OpenModeOption represents file open modes
@@ -180,13 +173,14 @@ func writableMode(mode OpenModeOption) bool {
 	return false
 }
 
-func initDisk(f *os.File, openMode OpenModeOption, sectorSize SectorSize) (*disk.Disk, error) {
+func initDisk(driver disk.Driver, openMode OpenModeOption, sectorSize SectorSize) (*disk.Disk, error) {
 	var (
 		diskType      disk.Type
 		size          int64
 		lblksize      = int64(defaultBlocksize)
 		pblksize      = int64(defaultBlocksize)
 		defaultBlocks = true
+		f             = driver.File()
 	)
 	log.Debug("initDisk(): start")
 
@@ -233,7 +227,7 @@ func initDisk(f *os.File, openMode OpenModeOption, sectorSize SectorSize) (*disk
 	writable := writableMode(openMode)
 
 	ret := &disk.Disk{
-		File:              f,
+		Driver:            driver,
 		Info:              devInfo,
 		Type:              diskType,
 		Size:              size,
@@ -323,14 +317,18 @@ func Open(device string, opts ...OpenOpt) (*disk.Disk, error) {
 	if err != nil {
 		return nil, fmt.Errorf("could not open device %s exclusively for writing", device)
 	}
+	driver, err := disk.GetDriver(f, false, 0, formats.Unknown)
+	if err != nil {
+		return nil, fmt.Errorf("Unable to get disk driver: %v", err)
+	}
 	// return our disk
-	return initDisk(f, ReadWriteExclusive, opt.sectorSize)
+	return initDisk(driver, ReadWriteExclusive, opt.sectorSize)
 }
 
 // Create a Disk from a path to a device
 // Should pass a path to a block device e.g. /dev/sda or a path to a file /tmp/foo.img
 // The provided device must not exist at the time you call Create()
-func Create(device string, size int64, format Format, sectorSize SectorSize) (*disk.Disk, error) {
+func Create(device string, size int64, format formats.Format, sectorSize SectorSize) (*disk.Disk, error) {
 	if device == "" {
 		return nil, errors.New("must pass device name")
 	}
@@ -341,10 +339,10 @@ func Create(device string, size int64, format Format, sectorSize SectorSize) (*d
 	if err != nil {
 		return nil, fmt.Errorf("could not create device %s: %v", device, errors.Unwrap(err))
 	}
-	err = os.Truncate(device, size)
+	driver, err := disk.GetDriver(f, true, size, format)
 	if err != nil {
 		return nil, fmt.Errorf("could not expand device %s to size %d: %v", device, size, errors.Unwrap(err))
 	}
 	// return our disk
-	return initDisk(f, ReadWriteExclusive, sectorSize)
+	return initDisk(driver, ReadWriteExclusive, sectorSize)
 }

@@ -7,6 +7,7 @@ import (
 
 	diskfs "github.com/diskfs/go-diskfs"
 	"github.com/diskfs/go-diskfs/disk"
+	"github.com/diskfs/go-diskfs/disk/formats"
 	"github.com/diskfs/go-diskfs/filesystem"
 	"github.com/diskfs/go-diskfs/filesystem/squashfs"
 )
@@ -16,7 +17,7 @@ func CreateSquashfs(diskImg string) {
 		log.Fatal("must have a valid path for diskImg")
 	}
 	var diskSize int64 = 10 * 1024 * 1024 // 10 MB
-	mydisk, err := diskfs.Create(diskImg, diskSize, diskfs.Raw, diskfs.SectorSizeDefault)
+	mydisk, err := diskfs.Create(diskImg, diskSize, formats.Raw, diskfs.SectorSizeDefault)
 	check(err)
 
 	fspec := disk.FilesystemSpec{Partition: 0, FSType: filesystem.TypeSquashfs, VolumeLabel: "label"}

@@ -9,6 +9,7 @@ import (
 
 	diskfs "github.com/diskfs/go-diskfs"
 	diskpkg "github.com/diskfs/go-diskfs/disk"
+	"github.com/diskfs/go-diskfs/disk/formats"
 	"github.com/diskfs/go-diskfs/filesystem"
 	"github.com/diskfs/go-diskfs/partition/gpt"
 )
@@ -25,7 +26,7 @@ func CreateEfi(diskImg string) {
 	)
 
 	// create a disk image
-	disk, err := diskfs.Create(diskImg, diskSize, diskfs.Raw, diskfs.SectorSizeDefault)
+	disk, err := diskfs.Create(diskImg, diskSize, formats.Raw, diskfs.SectorSizeDefault)
 	if err != nil {
 		log.Panic(err)
 	}
