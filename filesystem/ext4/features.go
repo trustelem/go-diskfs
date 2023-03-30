@@ -44,7 +44,7 @@ type featureFlags struct {
 	projectQuotas                    bool
 }
 
-func parseFeatureFlags(compatFlags, incompatFlags, roCompatFlags uint32) featureFlags {
+func parseFeatureFlags(compatFlags feature, incompatFlags feature, roCompatFlags feature) featureFlags {
 	f := featureFlags{
 		directoryPreAllocate:             compatFlags&compatFeatureDirectoryPreAllocate == compatFeatureDirectoryPreAllocate,
 		imagicInodes:                     compatFlags&compatFeatureImagicInodes == compatFeatureImagicInodes,
@@ -92,9 +92,9 @@ func parseFeatureFlags(compatFlags, incompatFlags, roCompatFlags uint32) feature
 
 func (f *featureFlags) toInts() (uint32, uint32, uint32) {
 	var (
-		compatFlags    uint32
-		inccompatFlags uint32
-		roCompatFlags  uint32
+		compatFlags   feature
+		incompatFlags feature
+		roCompatFlags feature
 	)
 
 	// compatible flags
@@ -220,7 +220,7 @@ func (f *featureFlags) toInts() (uint32, uint32, uint32) {
 		roCompatFlags = roCompatFlags | roCompatFeatureProjectQuotas
 	}
 
-	return compatFlags, incompatFlags, roCompatFlags
+	return uint32(compatFlags), uint32(incompatFlags), uint32(roCompatFlags)
 }
 
 // default features

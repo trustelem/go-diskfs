@@ -31,12 +31,8 @@ func (fi FileInfo) Mode() os.FileMode {
 }
 
 // Name base name of the file
-//  will return the long name of the file. If none exists, returns the shortname and extension
 func (fi FileInfo) Name() string {
-	if fi.name != "" {
-		return fi.name
-	}
-	return fi.shortName
+	return fi.name
 }
 
 // Size length in bytes for regular files

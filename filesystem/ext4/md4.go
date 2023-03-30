@@ -9,7 +9,7 @@ import (
 // It is a normal md4 hash, which is then "converted down"
 func HalfMD4(in []byte) ([]byte, error) {
 	h := md4.New()
-	n, err := h.Write(in)
+	_, err := h.Write(in)
 	if err != nil {
 		return nil, err
 	}

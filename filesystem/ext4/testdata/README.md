@@ -16,7 +16,3 @@ This makes:
 * some small and large files in the root
 
 You now have the exact files in `$PWD`
-
-## Updating Tests
-
-Certain data should be copied over to your "valid" test information in test files, notably:

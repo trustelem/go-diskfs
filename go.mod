@@ -3,7 +3,6 @@ module github.com/diskfs/go-diskfs
 go 1.19
 
 require (
-	github.com/bits-and-blooms/bitset v1.2.1
 	github.com/go-test/deep v1.0.8
 	github.com/google/uuid v1.3.0
 	github.com/pierrec/lz4/v4 v4.1.17
