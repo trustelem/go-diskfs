@@ -153,7 +153,7 @@ func parseHeader(b []byte) (*header, error) {
 	}
 	magic := binary.BigEndian.Uint32(b[0:4])
 	if magic != headerMagic {
-		return nil, fmt.Errorf("Header had magic of %d instead of expected %d", magic, headerMagic)
+		return nil, fmt.Errorf("header had magic of %d instead of expected %d", magic, headerMagic)
 	}
 	version := binary.BigEndian.Uint32(b[4:8])
 	if version != 2 && version != 3 {

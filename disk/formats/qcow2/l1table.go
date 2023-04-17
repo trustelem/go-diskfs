@@ -42,13 +42,16 @@ func (e l1TableEntry) toBytes() []byte {
 
 // parseL1Table read the l1table from the byte data
 func parseL1Table(b []byte) (*l1Table, error) {
-	table := l1Table{size: len(b)}
+	table := l1Table{
+		entries: make([]l1TableEntry, len(b)/8),
+		size:    len(b),
+	}
 	for i := 0; i < len(b); i += 8 {
 		entry, err := parseL1TableEntry(b[i : i+8])
 		if err != nil {
 			return nil, err
 		}
-		table.entries = append(table.entries, entry)
+		table.entries[i] = entry
 	}
 	return &table, nil
 }

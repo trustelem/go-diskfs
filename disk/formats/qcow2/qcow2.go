@@ -136,29 +136,29 @@ func Read(file *os.File, start int64) (*Qcow2, error) {
 	b := make([]byte, header2Size)
 	read, err = file.ReadAt(b, start)
 	if err != nil {
-		return nil, fmt.Errorf("Unable to read bytes for header: %v", err)
+		return nil, fmt.Errorf("unable to read bytes for header: %v", err)
 	}
 	if int64(read) != header2Size {
-		return nil, fmt.Errorf("Read %d bytes instead of expected %d for header", read, header2Size)
+		return nil, fmt.Errorf("read %d bytes instead of expected %d for header", read, header2Size)
 	}
 
 	// parse header first run. The purpose here is just to get the cluster size,
 	// since we really should parse the first cluster in its entirety
 	h, err := parseHeader(b)
 	if err != nil {
-		return nil, fmt.Errorf("Error parsing %d minimal header: %v", header2Size, err)
+		return nil, fmt.Errorf("error parsing %d minimal header: %v", header2Size, err)
 	}
 	b = make([]byte, h.clusterSize)
 	read, err = file.ReadAt(b, start)
 	if err != nil {
-		return nil, fmt.Errorf("Unable to read bytes for header: %v", err)
+		return nil, fmt.Errorf("unable to read bytes for header: %v", err)
 	}
 	if read != int(h.clusterSize) {
 		return nil, fmt.Errorf("Read %d bytes instead of expected cluster %d for header", read, h.clusterSize)
 	}
 	h, err = parseHeader(b)
 	if err != nil {
-		return nil, fmt.Errorf("Error parsing %d full cluster header: %v", h.clusterSize, err)
+		return nil, fmt.Errorf("error parsing %d full cluster header: %v", h.clusterSize, err)
 	}
 
 	compress, err := newCompressor(h.compressionType)
@@ -169,7 +169,7 @@ func Read(file *os.File, start int64) (*Qcow2, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error getting encryptor: %v", err)
 	}
-	if encrypt.hasHeader() {
+	if encrypt != nil && encrypt.hasHeader() {
 		for _, extension := range h.extensions {
 			extEncrypt, ok := extension.(headerExtensionFullDiskEncryption)
 			if !ok {
@@ -178,13 +178,13 @@ func Read(file *os.File, start int64) (*Qcow2, error) {
 			b = make([]byte, extEncrypt.length)
 			read, err = file.ReadAt(b, start+int64(extEncrypt.offset))
 			if err != nil {
-				return nil, fmt.Errorf("Unable to read bytes for full disk encryption header header: %v", err)
+				return nil, fmt.Errorf("unable to read bytes for full disk encryption header header: %v", err)
 			}
 			if uint64(read) != extEncrypt.length {
-				return nil, fmt.Errorf("Read %d bytes instead of expected %d for full disk encryption header header", read, extEncrypt.length)
+				return nil, fmt.Errorf("read %d bytes instead of expected %d for full disk encryption header header", read, extEncrypt.length)
 			}
 			if err := extEncrypt.parseEncryptionHeader(b); err != nil {
-				return nil, fmt.Errorf("Error reading full disk encryption header: %v", err)
+				return nil, fmt.Errorf("error reading full disk encryption header: %v", err)
 			}
 		}
 	}
@@ -204,7 +204,7 @@ func Read(file *os.File, start int64) (*Qcow2, error) {
 		return nil, fmt.Errorf("error parsing refcount table from bytes: %v", err)
 	}
 
-	l1TableBytes := make([]byte, int(h.l1Size))
+	l1TableBytes := make([]byte, int(h.l1Size)*8)
 	pos = start + int64(h.l1Offset)
 	n, err = file.ReadAt(l1TableBytes, pos)
 	if err != nil {
